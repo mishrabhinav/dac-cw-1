@@ -8,8 +8,8 @@ defmodule System1 do
     for i <- 1..num_peers, do:
       send Enum.at(peers, i - 1), {i, peers}
     # Send message to each peer
-    for peer <- peers, do
-      send Enum.at(peers, 0), {:broadcast, 1000, 3000}
+    for peer <- peers do
+      send peer, {:broadcast, max_broadcasts, timeout}
     end
   end
 end
