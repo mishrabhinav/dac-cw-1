@@ -7,7 +7,9 @@ defmodule System1 do
     peers = for _ <- 1..num_peers, do: spawn(Peer, :start, [])
     for i <- 1..num_peers, do:
       send Enum.at(peers, i - 1), {i, peers}
-    # Send message to first peer
-    send Enum.at(peers, 0), {:broadcast, 1000, 3000}
+    # Send message to each peer
+    for peer <- peers, do
+      send Enum.at(peers, 0), {:broadcast, 1000, 3000}
+    end
   end
 end
