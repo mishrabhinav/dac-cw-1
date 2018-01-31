@@ -7,7 +7,7 @@ defmodule System1 do
     timeout = 3000
     num_peers = 5
 
-    peers = for _ <- 1..num_peers, do: spawn(Peer, :start, [])
+    peers = for _ <- 1..num_peers, do: spawn(Peer2, :start, [])
 
     for id <- 1..num_peers, do:
       send Enum.at(peers, id - 1), {:bind, id-1, peers}
