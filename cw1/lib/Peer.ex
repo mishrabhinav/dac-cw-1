@@ -1,44 +1,42 @@
 # Matthew Brookes (mb5715) and Abhinav Mishra (am8315)
+
 defmodule Peer do
-  def start() do
-    receive do
-      { id, peers } -> next(id, peers)
-    end
-  end
 
-  defp next(id, peers) do
+  def start do
     receive do
-      { :broadcast, max_messages, timeout } -> broadcast id, peers, max_messages, timeout, 0, %{}, %{}
+      {:bind, id, peers } -> next(id, peers)
     end
-  end
+  end # start
 
-  defp broadcast(id, peers, max_messages, timeout, sent_count, sent_map, receive_map) do
-    if sent_count == 0 do
-      for i <- 1..length(peers) do
-        Map.update(sent_map, i, 1, &(&1 + 1))
-        send Enum.at(peers, i - 1), { :hello, id }
-      end
-      broadcast(id, peers, max_messages, timeout, sent_count + length(peers), sent_map, receive_map)
-    else
-      if sent_count < max_messages do
-        receive do
-          { :hello, receive_id } ->
-            Map.update(receive_map, receive_id, 1, &(&1 + 1))
-            for i <- 1..length(peers) do
-              Map.update(sent_map, i, 1, &(&1 + 1))
-              send Enum.at(peers, i - 1), { :hello, id }
-            end
-            broadcast(id, peers, max_messages, timeout, sent_count + length(peers), sent_map, receive_map)
-        after timeout ->
-          IO.puts [id, " timed out"]
-        end
-      else
-        output = "#{id}: "
-        for i <- 1..length(peers) do
-          output = output <> "{#{sent_map[id]}:#{receive_map[Enum.at(peers, i - 1)]}} "
-        end
-        IO.puts output
-      end
+  defp next id, peers do
+    receive do
+      { :broadcast, max_messages, timeout } ->
+        counter = for _ <- peers, do: {0, 0}
+        broadcast id, peers, max_messages, timeout, 0, counter
     end
-  end
-end
+  end # next
+
+  defp broadcast id, peers, max_messages, timeout, sent_count, counter do
+    if sent_count < max_messages do
+      for i <- 1..length(peers), do:
+        send Enum.at(peers, i-1), { :hello, id }
+
+      counter = Enum.map(counter, fn {s, r} -> {s+1, r} end)
+    end
+
+    receive do
+      { :hello, recv_id } ->
+        counter = List.update_at(counter, recv_id, fn {s, r} -> {s, r+1} end)
+        broadcast id, peers, max_messages, timeout, sent_count + 1, counter
+    after
+      timeout ->
+        output = ["#{id+1}:"]
+
+        stats = for {sent, recv} <- counter, do: "{#{sent}:#{recv}}"
+
+        IO.puts Enum.join(output ++ stats, " ")
+    end
+
+  end # broadcast
+
+end # Peer

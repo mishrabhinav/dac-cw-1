@@ -1,6 +1,5 @@
 PEERS    = 10
-MAIN     = Cw1.hello
-MAIN_NET = Flooding.main_net
+MAIN     = System1.main
 
 PROJECT  = da347
 NETWORK  = $(PROJECT)_network
