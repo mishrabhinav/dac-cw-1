@@ -1,14 +1,14 @@
 defmodule Peer do
 
-  def start do
-    app = spawn App, :start, []
-    pl = spawn PL, :start, []
+  def start id, system do
+    app = spawn App, :start, [id]
+    pl = spawn PL, :start, [id, app]
+
+    send system, { :response, id, pl }
 
     receive do
-      { :request, id, system, peers } ->
-        send app, { :init, id, pl, peers }
-        send pl, { :init, id, app }
-        send system, { :response, id, pl, app }
+      { :bind, peer_pls } ->
+        send app, { :bind, peer_pls }
     end
   end
 

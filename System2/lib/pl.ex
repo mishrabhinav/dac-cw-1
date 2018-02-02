@@ -1,16 +1,9 @@
 defmodule PL do
 
-  def start do
+  def start id, app do
     receive do
-      { :init, id, app } ->
-        wait_for_broadcast id, app
-    end
-  end
-
-  defp wait_for_broadcast id, app do
-    receive do
-      { :broadcast, max_broadcasts, timeout } ->
-        send app, { :broadcast, max_broadcasts, timeout }
+      { :pl_send, max_broadcasts, timeout } ->
+        send app, { :pl_deliver, max_broadcasts, timeout }
         next id, app
     end
   end
@@ -21,7 +14,6 @@ defmodule PL do
         send to_pid, { :pl_deliver, id, message }
 
       { :pl_deliver, from, message } ->
-        IO.puts from
         send app, { :pl_deliver, from, message }
     end
 
