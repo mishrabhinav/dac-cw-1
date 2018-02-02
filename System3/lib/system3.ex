@@ -22,7 +22,7 @@ defmodule System3 do
     for { _, peer } <- peers, do:
       send peer, { :bind, peer_bebs }
 
-    for { _, pl, beb, app } <- peer_bebs, do:
+    for { _, pl, _, _ } <- peer_bebs, do:
       send pl, { :pl_send, max_broadcasts, timeout }
 
   end # main
