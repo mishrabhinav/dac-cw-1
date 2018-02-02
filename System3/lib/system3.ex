@@ -12,19 +12,19 @@ defmodule System3 do
         "false" -> for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self()]) }
       end
 
-    peer_pls =
+    peer_bebs =
       for _ <- 1..num_peers do
         receive do
-          { :response, id, pl } -> { id, pl }
+          { :response, id, pl, beb, app } -> { id, pl, beb, app }
         end
       end
 
     for { _, peer } <- peers, do:
-      send peer, { :bind, peer_pls }
+      send peer, { :bind, peer_bebs }
 
-    for { _, pl } <- peer_pls, do:
+    for { _, pl, _, _ } <- peer_bebs, do:
       send pl, { :pl_send, max_broadcasts, timeout }
 
   end # main
 
-end
+end # System3
