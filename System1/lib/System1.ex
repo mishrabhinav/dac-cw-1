@@ -7,7 +7,11 @@ defmodule System1 do
     timeout = 3000
     num_peers = 5
 
-    peers = for _ <- 1..num_peers, do: spawn(Peer, :start, [])
+    peers =
+      case System.get_env("DOCKER") || "false" do
+        "true" -> for i <- 1..num_peers, do: Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [])
+        "false" -> for _ <- 1..num_peers, do: spawn(Peer, :start, [])
+      end
 
     for id <- 1..num_peers, do:
       send Enum.at(peers, id - 1), {:bind, id-1, peers}
