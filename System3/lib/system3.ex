@@ -1,18 +1,28 @@
 defmodule System3 do
-  @moduledoc """
-  Documentation for System3.
-  """
 
-  @doc """
-  Hello world.
+  def main do
+    max_broadcasts = 1000
+    timeout = 3000
+    num_peers = 5
 
-  ## Examples
+    peers = for i <- 1..num_peers, do: { i, spawn(Peer, :start, []) }
 
-      iex> System3.hello
-      :world
+    for { id, peer } <- peers, do:
+      send peer, {:request, id, self()}
 
-  """
-  def hello do
-    :world
-  end
+    peer_metadata =
+      for _ <- 1..num_peers do
+        receive do
+          { :response, id, pl } -> { id, pl }
+        end
+      end
+
+    for { _, pl } <- peer_metadata, do:
+      send pl, { :bind, peer_metadata }
+
+    for { _, pl } <- peer_metadata, do:
+      send pl, { :broadcast, max_broadcasts, timeout }
+
+  end # main
+
 end
