@@ -5,7 +5,7 @@ defmodule System6 do
     timeout = 3000
     kill_timeout = 5
     num_peers = 5
-    lpl_drop_rate = 33
+    lpl_drop_rate = 100
 
     peers =
       case System.get_env("DOCKER") || "false" do
@@ -13,17 +13,18 @@ defmodule System6 do
         "false" -> for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self(), lpl_drop_rate, kill_timeout]) }
       end
 
-    peer_bebs =
+    peer_metadata =
       for _ <- 1..num_peers do
         receive do
-          { :response, id, lpl, beb, app } -> { id, lpl, beb, app }
+          { :response, id, lpl, beb, app, erb } ->
+            { id, lpl, beb, app, erb }
         end
       end
 
     for { _, peer } <- peers, do:
-      send peer, { :bind, peer_bebs }
+      send peer, { :bind, peer_metadata }
 
-    for { _, lpl, _, _ } <- peer_bebs, do:
+    for { _, lpl, _, _, _ } <- peer_metadata, do:
       send lpl, { :pl_send, max_broadcasts, timeout }
 
   end # main

@@ -4,30 +4,30 @@ defmodule BEB do
 
   def start id do
     receive do
-      { :bind, lpl, app, lpls } ->
-        wait_for_broadcast id, lpl, app, lpls
+      { :bind, lpl, erb, lpls } ->
+        wait_for_broadcast id, lpl, erb, lpls
     end
   end # start
 
-  defp wait_for_broadcast id, lpl, app, lpls do
+  defp wait_for_broadcast id, lpl, erb, lpls do
     receive do
       { :pl_deliver, max_broadcasts, timeout } ->
-        send app, { :beb_deliver, max_broadcasts, timeout }
-        next id, lpl, app, lpls
+        send erb, { :beb_deliver, max_broadcasts, timeout }
+        next id, lpl, erb, lpls
     end
   end # wait_for_broadcast
 
-  defp next id, lpl, app, lpls do
+  defp next id, lpl, erb, lpls do
     receive do
-      { :beb_broadcast, message } ->
+      { :beb_broadcast, erb_m } ->
         for { _, dest } <- lpls, do:
-          send lpl, { :pl_send, id, dest, message }
+          send lpl, { :pl_send, id, dest, erb_m }
 
-      { :pl_deliver, from, message } ->
-        send app, { :beb_deliver, from, message }
+      { :pl_deliver, from, erb_m } ->
+        send erb, { :beb_deliver, from, erb_m }
     end
 
-    next id, lpl, app, lpls
+    next id, lpl, erb, lpls
   end #next
 
 end # BEB

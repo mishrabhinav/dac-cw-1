@@ -5,24 +5,28 @@ defmodule Peer do
     app = spawn App, :start, [id]
     lpl = spawn LPL, :start, [id, lpl_drop_rate]
     beb = spawn BEB, :start, [id]
+    erb = spawn ERB, :start, [id]
 
-    send system, { :response, id, lpl, beb, app }
+    send system, { :response, id, lpl, beb, app, erb }
 
     receive do
-      { :bind, peer_bebs } ->
-        lpls = Enum.map(peer_bebs, fn { id, lpl, _, _ } -> { id, lpl } end)
-        send app, { :bind, beb, length(peer_bebs) }
-        send lpl,  { :bind, beb }
-        send beb, { :bind, lpl, app, lpls }
+      { :bind, peer_metadata } ->
+        lpls = Enum.map(peer_metadata, fn { id, lpl, _, _, _ } -> { id, lpl } end)
+
+        send lpl, { :bind, beb }
+        send beb, { :bind, lpl, erb, lpls }
+        send erb, { :bind, beb, app }
+        send app, { :bind, erb, length(peer_metadata) }
     end
 
     if id == 3, do:
-      kill kill_timeout, app, lpl, beb
+      kill kill_timeout, app, lpl, beb, erb
   end # start
 
-  defp kill timeout, app, lpl, beb do
+  defp kill timeout, app, lpl, beb, erb do
     Process.sleep(timeout)
     Process.exit(app, :kill)
+    Process.exit(erb, :kill)
     Process.exit(beb, :kill)
     Process.exit(lpl, :kill)
     Process.exit(self(), :kill)
