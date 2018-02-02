@@ -4,12 +4,9 @@ version: "3.4"
 
 x-common:
   &defaults
-    image: elixir:alpine
-    volumes:
-      - .:/project
+    build: .
     environment:
       - DOCKER=true
-    working_dir: /project
     networks:
       - network
 
