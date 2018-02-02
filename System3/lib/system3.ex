@@ -1,3 +1,4 @@
+# Matthew Brookes (mb5715) and Abhinav Mishra (am8315)
 defmodule System3 do
 
   def main do
@@ -5,7 +6,11 @@ defmodule System3 do
     timeout = 3000
     num_peers = 5
 
-    peers = for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self()]) }
+    peers =
+      case System.get_env("DOCKER") || "false" do
+        "true" -> for i <- 1..num_peers, do: { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self()]) }
+        "false" -> for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self()]) }
+      end
 
     peer_pls =
       for _ <- 1..num_peers do
@@ -14,10 +19,10 @@ defmodule System3 do
         end
       end
 
-    for { id, peer } <- peers, do:
+    for { _, peer } <- peers, do:
       send peer, { :bind, peer_pls }
 
-    for { id, pl } <- peer_pls, do:
+    for { _, pl } <- peer_pls, do:
       send pl, { :pl_send, max_broadcasts, timeout }
 
   end # main
