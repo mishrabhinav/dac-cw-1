@@ -1,0 +1,64 @@
+# Matthew Brookes (mb5715) and Abhinav Mishra (am8315)
+
+version: "3.4"
+
+x-common:
+  &defaults
+    build: .
+    environment:
+      - DOCKER=true
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+
+services:
+  system.localdomain:
+    container_name: system
+    command: >
+      elixir --name system@system.localdomain --cookie pass
+             -S mix run --no-halt -e System4.main
+    <<: *defaults
+    depends_on:
+      - peer1.localdomain
+      - peer2.localdomain
+      - peer3.localdomain
+      - peer4.localdomain
+      - peer5.localdomain
+
+  peer1.localdomain:
+    container_name: peer1
+    command: >
+      elixir --name peer1@peer1.localdomain --cookie pass
+             -S mix run --no-halt
+    <<: *defaults
+
+  peer2.localdomain:
+    container_name: peer2
+    command: >
+      elixir --name peer2@peer2.localdomain --cookie pass
+             -S mix run --no-halt
+    <<: *defaults
+
+  peer3.localdomain:
+    container_name: peer3
+    command: >
+      elixir --name peer3@peer3.localdomain --cookie pass
+             -S mix run --no-halt
+    <<: *defaults
+
+  peer4.localdomain:
+    container_name: peer4
+    command: >
+      elixir --name peer4@peer4.localdomain --cookie pass
+             -S mix run --no-halt
+    <<: *defaults
+
+  peer5.localdomain:
+    container_name: peer5
+    command: >
+      elixir --name peer5@peer5.localdomain --cookie pass
+             -S mix run --no-halt
+    <<: *defaults
