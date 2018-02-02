@@ -8,7 +8,7 @@ defmodule System2 do
     peers = for i <- 1..num_peers, do: { i, spawn(Peer, :start, []) }
 
     for { id, peer } <- peers, do:
-      send peer, {:request, id, self()}
+      send peer, { :request, id, self(), peers }
 
     peer_metadata =
       for _ <- 1..num_peers do

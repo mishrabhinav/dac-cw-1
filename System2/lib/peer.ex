@@ -5,10 +5,10 @@ defmodule Peer do
     pl = spawn PL, :start, []
 
     receive do
-      {:request, id, system} ->
-        send app, { :init, id, pl }
+      { :request, id, system, peers } ->
+        send app, { :init, id, pl, peers }
         send pl, { :init, id, app }
-        send system, { :response, id, pl }
+        send system, { :response, id, pl, app }
     end
   end
 
