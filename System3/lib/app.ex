@@ -4,12 +4,11 @@ defmodule App do
   def start id do
     receive do
       {:bind, beb } ->
-        #[{ _, pl }] = Enum.filter(peer_pls, fn { app_id, _ } -> app_id == id end)
-        wait_for_broadcast id, beb#id, pl, peer_pls
+        wait_for_broadcast id, beb
     end
   end # start
 
-  defp wait_for_broadcast id, beb do#id, pl, peer_pls do
+  defp wait_for_broadcast id, beb do
     receive do
       { :beb_deliver, max_messages, timeout } ->
         counter = for _ <- 1..5, do: {0, 0}
@@ -24,10 +23,6 @@ defmodule App do
         IO.puts Enum.join(["#{id}:"] ++ stats, " ")
 
       messages > 0 ->
-        #for i <- 1..length(peer_pls) do
-        #  [{ _, to_pl }] = Enum.filter(peer_pls, fn { app_id, _ } -> app_id == i end)
-        #  send pl, { :pl_send, to_pl, :hello }
-        #end
         send beb, { :beb_broadcast, :hello }
 
         counter = Enum.map(counter, fn {s, r} -> {s+1, r} end)
