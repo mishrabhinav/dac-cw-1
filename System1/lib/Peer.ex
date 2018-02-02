@@ -34,14 +34,14 @@ defmodule Peer do
             broadcast id, peers, messages - 1, end_time, counter
         after
           0 ->
-            broadcast id, peers, messages , end_time, counter
+            broadcast id, peers, messages - 1, end_time, counter
         end
 
       true ->
         receive do
           { :hello, recv_id } ->
             counter = List.update_at(counter, recv_id, fn {s, r} -> {s, r+1} end)
-            broadcast id, peers, messages - 1, end_time, counter
+            broadcast id, peers, messages, end_time, counter
         after
           0 ->
             broadcast id, peers, messages , end_time, counter
