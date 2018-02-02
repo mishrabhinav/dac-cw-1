@@ -18,10 +18,10 @@ defmodule System2 do
         end
       end
 
-    for { id, peer } <- peers, do:
+    for { _, peer } <- peers, do:
       send peer, { :bind, peer_pls }
 
-    for { id, pl } <- peer_pls, do:
+    for { _, pl } <- peer_pls, do:
       send pl, { :pl_send, max_broadcasts, timeout }
 
   end # main
