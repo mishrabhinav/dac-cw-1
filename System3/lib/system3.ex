@@ -5,23 +5,20 @@ defmodule System3 do
     timeout = 3000
     num_peers = 5
 
-    peers = for i <- 1..num_peers, do: { i, spawn(Peer, :start, []) }
+    peers = for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self()]) }
 
-    for { id, peer } <- peers, do:
-      send peer, {:request, id, self()}
-
-    peer_metadata =
+    peer_pls =
       for _ <- 1..num_peers do
         receive do
           { :response, id, pl } -> { id, pl }
         end
       end
 
-    for { _, pl } <- peer_metadata, do:
-      send pl, { :bind, peer_metadata }
+    for { id, peer } <- peers, do:
+      send peer, { :bind, peer_pls }
 
-    for { _, pl } <- peer_metadata, do:
-      send pl, { :broadcast, max_broadcasts, timeout }
+    for { id, pl } <- peer_pls, do:
+      send pl, { :pl_send, max_broadcasts, timeout }
 
   end # main
 
