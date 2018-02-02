@@ -29,17 +29,21 @@ defmodule App do
 
         receive do
           { :erb_deliver, from, :hello } ->
-            counter = List.update_at(counter, from - 1, fn {s, r} -> {s, r+1} end)
+            counter = List.update_at(counter,
+                                     from - 1,
+                                     fn {s, r} -> {s, r+1} end)
             broadcast id, erb, messages - 1, end_time, counter
         after
           0 ->
-            broadcast id, erb, messages - 1, end_time, counter
+          broadcast id, erb, messages - 1, end_time, counter
         end
 
       true ->
         receive do
           { :erb_deliver, from, :hello } ->
-            counter = List.update_at(counter, from - 1, fn {s, r} -> {s, r+1} end)
+            counter = List.update_at(counter,
+                                     from - 1,
+                                     fn {s, r} -> {s, r+1} end)
             broadcast id, erb, messages - 1, end_time, counter
         after
           0 ->

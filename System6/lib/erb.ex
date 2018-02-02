@@ -27,7 +27,11 @@ defmodule ERB do
         else
           send app, { :erb_deliver, sender, message }
           send beb, { :beb_broadcast, erb_m }
-          next id, beb, app, MapSet.put(delivered, { sender, message, g_seq }), seq
+          next(id,
+               beb,
+               app,
+               MapSet.put(delivered, { sender, message, g_seq }),
+               seq)
         end
     end
   end # next

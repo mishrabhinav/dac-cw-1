@@ -5,12 +5,23 @@ defmodule System6 do
     timeout = 3000
     kill_timeout = 5
     num_peers = 5
-    lpl_drop_rate = 100
+    pl_reliability = 100
 
     peers =
       case System.get_env("DOCKER") || "false" do
-        "true" -> for i <- 1..num_peers, do: { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), lpl_drop_rate, kill_timeout]) }
-        "false" -> for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self(), lpl_drop_rate, kill_timeout]) }
+        "true" ->
+          for i <- 1..num_peers, do:
+           { i,
+             Node.spawn(:"peer#{i}@peer#{i}.localdomain",
+                        Peer,
+                        :start,
+                        [i, self(), pl_reliability, kill_timeout])
+           }
+        "false" ->
+          for i <- 1..num_peers, do:
+            { i,
+              spawn(Peer, :start, [i, self(), pl_reliability, kill_timeout])
+            }
       end
 
     peer_metadata =

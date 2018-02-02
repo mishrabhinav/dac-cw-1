@@ -11,7 +11,8 @@ defmodule Peer do
 
     receive do
       { :bind, peer_metadata } ->
-        lpls = Enum.map(peer_metadata, fn { id, lpl, _, _, _ } -> { id, lpl } end)
+        lpls = Enum.map(peer_metadata,
+                        fn { id, lpl, _, _, _ } -> { id, lpl } end)
 
         send lpl, { :bind, beb }
         send beb, { :bind, lpl, erb, lpls }
