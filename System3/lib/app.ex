@@ -3,15 +3,15 @@ defmodule App do
 
   def start id do
     receive do
-      {:bind, beb } ->
-        wait_for_broadcast id, beb
+      {:bind, beb, num_peers } ->
+        wait_for_broadcast id, beb, num_peers
     end
   end # start
 
-  defp wait_for_broadcast id, beb do
+  defp wait_for_broadcast id, beb, num_peers do
     receive do
       { :beb_deliver, max_messages, timeout } ->
-        counter = for _ <- 1..5, do: {0, 0}
+        counter = for _ <- 1..num_peers, do: {0, 0}
         broadcast id, beb, max_messages, curr_time() + timeout, counter
     end
   end # wait_for_broadcast

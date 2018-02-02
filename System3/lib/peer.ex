@@ -11,7 +11,7 @@ defmodule Peer do
     receive do
       { :bind, peer_bebs } ->
         pls = Enum.map(peer_bebs, fn { id, pl, _, _ } -> { id, pl } end)
-        send app, { :bind, beb }
+        send app, { :bind, beb, length(peer_bebs) }
         send pl,  { :bind, beb }
         send beb, { :bind, pl, app, pls }
     end
