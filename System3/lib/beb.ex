@@ -7,7 +7,7 @@ defmodule BEB do
       { :bind, pl, app, pls } ->
         wait_for_broadcast id, pl, app, pls
     end
-  end
+  end # start
 
   defp wait_for_broadcast id, pl, app, pls do
     receive do
@@ -15,7 +15,7 @@ defmodule BEB do
         send app, { :beb_deliver, max_broadcasts, timeout }
         next id, pl, app, pls
     end
-  end
+  end # wait_for_broadcast
 
   defp next id, pl, app, pls do
     receive do
@@ -28,6 +28,6 @@ defmodule BEB do
     end
 
     next id, pl, app, pls
-  end
+  end #next
 
 end # BEB

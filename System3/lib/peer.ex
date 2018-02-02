@@ -15,6 +15,6 @@ defmodule Peer do
         send pl,  { :bind, beb }
         send beb, { :bind, pl, app, pls }
     end
-  end
+  end # start
 
-end
+end # Peer

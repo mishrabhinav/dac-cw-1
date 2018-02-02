@@ -14,7 +14,7 @@ defmodule App do
         counter = for _ <- 1..5, do: {0, 0}
         broadcast id, beb, max_messages, curr_time() + timeout, counter
     end
-  end # next
+  end # wait_for_broadcast
 
   defp broadcast id, beb, messages, end_time, counter do
     cond do
@@ -51,6 +51,6 @@ defmodule App do
 
   defp curr_time do
         :os.system_time(:millisecond)
-  end
+  end # curr_time
 
-end
+end # App

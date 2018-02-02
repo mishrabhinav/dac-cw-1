@@ -5,7 +5,7 @@ defmodule PL do
     receive do
       { :bind, beb } -> wait_for_broadcast id, beb
     end
-  end
+  end # start
 
   defp wait_for_broadcast id, beb do
     receive do
@@ -13,7 +13,7 @@ defmodule PL do
         send beb, { :pl_deliver, max_broadcasts, timeout }
         next id, beb
     end
-  end
+  end # wait_for_broadcast
 
   defp next id, beb do
     receive do
@@ -25,6 +25,6 @@ defmodule PL do
     end
 
     next id, beb
-  end
+  end # next
 
-end
+end # PL
