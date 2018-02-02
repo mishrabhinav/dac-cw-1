@@ -5,7 +5,11 @@ defmodule System2 do
     timeout = 3000
     num_peers = 5
 
-    peers = for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self()]) }
+    peers =
+      case System.get_env("DOCKER") || "false" do
+        "true" -> for i <- 1..num_peers, do: { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self()]) }
+        "false" -> for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self()]) }
+      end
 
     peer_pls =
       for _ <- 1..num_peers do
