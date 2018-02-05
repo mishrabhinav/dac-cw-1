@@ -5,3 +5,5 @@ WORKDIR ./project
 
 COPY mix.exs .
 COPY lib ./lib
+
+RUN mix compile
