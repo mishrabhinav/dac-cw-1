@@ -7,6 +7,8 @@ x-common:
     build: .
     environment:
       - DOCKER=true
+      - MAX_BROADCASTS=${MAX_BROADCASTS:-1000}
+      - TIMEOUT=${TIMEOUT:-3000}
     networks:
       - network
 

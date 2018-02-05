@@ -7,6 +7,11 @@ x-common:
     build: .
     environment:
       - DOCKER=true
+      - MAX_BROADCASTS=${MAX_BROADCASTS:-1000}
+      - TIMEOUT=${TIMEOUT:-3000}
+      - LPL_DROP_RATE=${LPL_DROP_RATE:-0}
+      - KILL_TIMEOUT=${KILL_TIMEOUT:-5}
+      - FAILURE_TIMEOUT=${FAILURE_TIMEOUT:-1000}
     networks:
       - network
 
