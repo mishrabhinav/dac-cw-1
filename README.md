@@ -34,6 +34,56 @@ Additionally configuration parameters can be passed in as environment variables 
 MAX_BROADCASTS=3000 KILL_TIMEOUT=100 mix run --no-halt -e SystemX.main
 ```
 
+## Running each System on a cluster of nodes
+
+### Setup
+Prerequisites:
+- Digital Ocean Account
+- Terraform
+
+A terrform configuration file has been supplied to setup the Peers and the System on a bunch of Digital Ocean droplets. Before running the terraform config, create a file (`terraform.tfvars`) with the following content.
+
+```
+digitalocean_token = "<Digital Ocean API Key>"
+fingerprint        = "<Fingerprint of the SSH Key added to Digital Ocean>"
+private_key_file   = "<Location of the private key file>"
+```
+
+You can get the Digital Ocean API key from their portal. Please make sure that you have access to the private key file as it will be required to SSH into the `system` node to run the elixir proccessess. You might have to change the scripts to point to the private key file. For minimal changes, name the private key file `digital_rsa` and place it in the `~/.ssh` directory. After the configuration file is ready, do the following:
+
+```
+> cd Terraform
+> terraform validate # This validates the terraform config
+> terraform plan     # Shows you a plan of the deployment
+> terraform apply    # Runs terraform to create the necessary resources
+> ./run peers.txt system.txt ../<>
+```
+
+Now you should be in a state to start the Peers on the peer nodes. Run the following in the `Terraform` directory.
+
+```
+> ./run peers.txt system.txt ../<SystemX> # X = 1..7
+```
+
+This will SSH into every peer node, check the requirements, and start the elixir node in detached mode with the name set as `peer<X>@<ipv4_address>`. It also checks the system node for the requirements. After the script finished, once can SSH into the system node and navigate to `dac-cw-1/System<X>` and run the following command to start the SystemX (X = 1..7).
+```
+> elixir --name system@<ipv4_address> --cookie darthvader -S mix run --no-halt -e System<X>.main_net
+```
+This should automatically connect to the peer nodes and run the system. The system ip can be found in `system.txt` and the peer ip's can be found in `peers.txt`. A lot of log (`.txt`) files are also generated for debugging purposes.
+
+### Cleanup
+Execute the following commands for a proper cleanup and destruction of the resources.
+```
+> cd Terraform
+> rm *.txt
+> terraform destroy
+```
+
+At this point, all the Digital Ocean resources should have been destroyed but it's safer to double check on the dashboard.
+
+### Detailed Provisioning
+It is a pretty straightforward setup. The terraform config creates 5 peer nodes and 1 system node by default. These number can be changed manually for creating a different number of nodes. All the peer nodes are created before the system node as the system node has to save the IP addresses of the peer nodes. After the peer droplet (node) is created, a series of scripts are run to setup elixir, clone the source code, and save the IPv4 address both locally and on the node. The system node is setup is a similar fashion except a file with all the peer ipv4 addresses is copied to `/etc/ips.txt` for the `System` process to read peer IP's.
+
 ## Specifying configuration options
 Each system has a number of configurable options which are overriden using environment variables. The environment variables in the user shell are also passed into the container by `docker-compose` or can be specified with the `docker run -e` syntax.
 
