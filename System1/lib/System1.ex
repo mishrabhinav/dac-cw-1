@@ -4,8 +4,17 @@ defmodule System1 do
 
   def main do
     IO.puts ["\tSystem at ", DNS.my_ip_addr()]
-    max_broadcasts = 1000
-    timeout = 3000
+    #max_broadcasts = String.to_integer(System.get_env("MAX_BROADCASTS") || "") || 1000
+    max_broadcasts = if System.get_env("MAX_BROADCASTS") do
+                       String.to_integer(System.get_env("MAX_BROADCASTS"))
+                     else
+                       1000
+                     end
+    timeout        = if System.get_env("TIMEOUT") do
+                       String.to_integer(System.get_env("TIMEOUT"))
+                     else
+                       3000
+                     end
     num_peers = 5
 
     peers =
