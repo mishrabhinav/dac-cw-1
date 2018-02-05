@@ -2,6 +2,8 @@
 defmodule ERB do
 
   def start id do
+    IO.puts ["\tERB at ", DNS.my_ip_addr()]
+
     receive do
       { :bind, beb, app } ->
         wait_for_broadcast id, beb, app

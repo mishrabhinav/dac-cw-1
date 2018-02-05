@@ -2,6 +2,8 @@
 defmodule PL do
 
   def start id, app do
+    IO.puts ["\tPL at ", DNS.my_ip_addr()]
+
     receive do
       { :pl_send, max_broadcasts, timeout } ->
         send app, { :pl_deliver, max_broadcasts, timeout }

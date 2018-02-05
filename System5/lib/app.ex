@@ -2,6 +2,8 @@
 defmodule App do
 
   def start id do
+    IO.puts ["\tApp at ", DNS.my_ip_addr()]
+
     receive do
       {:bind, beb, num_peers } ->
         wait_for_broadcast id, beb, num_peers

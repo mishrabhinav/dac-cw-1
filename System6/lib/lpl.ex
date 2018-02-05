@@ -2,6 +2,8 @@
 defmodule LPL do
 
   def start id, drop_rate do
+    IO.puts ["\tLPL at ", DNS.my_ip_addr()]
+
     receive do
       { :bind, beb } -> wait_for_broadcast id, beb, drop_rate
     end

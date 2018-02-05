@@ -2,6 +2,8 @@
 defmodule PL do
 
   def start id do
+    IO.puts ["\tPL at ", DNS.my_ip_addr()]
+
     receive do
       { :bind, beb } -> wait_for_broadcast id, beb
     end

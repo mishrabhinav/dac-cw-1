@@ -2,6 +2,8 @@
 defmodule App do
 
   def start id do
+    IO.puts ["\tApp at ", DNS.my_ip_addr()]
+
     receive do
       {:bind, peer_pls } ->
         [{ _, pl }] = Enum.filter(peer_pls, fn { app_id, _ } -> app_id == id end)

@@ -3,6 +3,8 @@
 defmodule BEB do
 
   def start id do
+    IO.puts ["\tBEB at ", DNS.my_ip_addr()]
+
     receive do
       { :bind, pl, app, pls } ->
         wait_for_broadcast id, pl, app, pls

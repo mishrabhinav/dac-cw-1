@@ -3,6 +3,7 @@
 defmodule Peer do
 
   def start do
+    IO.puts ["\tPeer at ", DNS.my_ip_addr()]
     receive do
       {:bind, id, peers } -> next(id, peers)
     end

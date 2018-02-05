@@ -1,6 +1,8 @@
 defmodule System4 do
 
   def main do
+    IO.puts ["\tSystem at ", DNS.my_ip_addr()]
+
     max_broadcasts = 1000
     timeout = 3000
     num_peers = 5

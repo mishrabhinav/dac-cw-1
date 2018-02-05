@@ -1,6 +1,8 @@
 defmodule System5 do
 
   def main do
+    IO.puts ["\tSystem at ", DNS.my_ip_addr()]
+
     max_broadcasts = 1000
     timeout = 3000
     kill_timeout = 5
