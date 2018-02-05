@@ -14,5 +14,5 @@ cd dac-cw-1/System2
 IP=`ifconfig eth0 | sed -n '2s/[^:]*:\([^ ]*\).*/\1/p'`
 
 echo "Starting elixir node..."
-elixir --name peer2@$IP --cookie darthvader --detached -S mix run --no-halt -e System2.main
+elixir --name peer2@$IP --cookie darthvader --detached -S mix run --no-halt
 echo "Running at peer2@$IP"

@@ -21,7 +21,7 @@ services:
     container_name: system
     command: >
       elixir --name system@system.localdomain --cookie pass
-             -S mix run --no-halt -e System3.main
+             -S mix run --no-halt -e System3.main_docker
     <<: *defaults
     depends_on:
       - peer1.localdomain

@@ -8,7 +8,7 @@ defmodule System1 do
 
   def main_docker do
     init :docker, []
-  end # main
+  end # main_docker
 
   def main_net do
     domains =
@@ -17,7 +17,7 @@ defmodule System1 do
       |> Enum.to_list
 
     init :net, domains
-  end # main
+  end # main_net
 
   defp init env, domains do
     IO.puts ["\tSystem at ", DNS.my_ip_addr()]

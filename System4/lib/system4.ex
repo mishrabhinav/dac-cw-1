@@ -1,6 +1,25 @@
+# Matthew Brookes (mb5715) and Abhinav Mishra (am8315)
+
 defmodule System4 do
 
   def main do
+    init :local, []
+  end # main
+
+  def main_docker do
+    init :docker, []
+  end # main_docker
+
+  def main_net do
+    domains =
+      File.stream!("/etc/ips.txt")
+      |> Stream.map(&String.trim_trailing/1)
+      |> Enum.to_list
+
+    init :net, domains
+  end # main_net
+
+  defp init env, domains do
     IO.puts ["\tSystem at ", DNS.my_ip_addr()]
 
     max_broadcasts = if System.get_env("MAX_BROADCASTS") do
@@ -20,11 +39,13 @@ defmodule System4 do
                      end
     num_peers = 5
 
-    peers =
-      case System.get_env("DOCKER") || "false" do
-        "true" -> for i <- 1..num_peers, do: { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), lpl_drop_rate]) }
-        "false" -> for i <- 1..num_peers, do: { i, spawn(Peer, :start, [i, self(), lpl_drop_rate]) }
+    peers = for i <- 1..num_peers do
+      case env do
+        :net    -> { i, Node.spawn(:"peer4@#{Enum.at(domains, i - 1)}", Peer, :start, [i, self(), lpl_drop_rate])}
+        :docker -> { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), lpl_drop_rate])}
+        :local  -> { i, spawn(Peer, :start, [i, self(), lpl_drop_rate])}
       end
+    end
 
     peer_bebs =
       for _ <- 1..num_peers do
