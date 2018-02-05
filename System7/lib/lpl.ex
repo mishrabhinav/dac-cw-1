@@ -19,12 +19,12 @@ defmodule LPL do
 
   defp next id, beb, drop_rate do
     receive do
-      { :pl_send, id, to_pid, erb_m } ->
+      { :pl_send, id, to_pid, lrb_m } ->
         if :rand.uniform(100) <= drop_rate, do:
-          send to_pid, { :pl_deliver, id, erb_m }
+          send to_pid, { :pl_deliver, id, lrb_m }
 
-      { :pl_deliver, from, erb_m } ->
-        send beb, { :pl_deliver, from, erb_m }
+      { :pl_deliver, from, lrb_m } ->
+        send beb, { :pl_deliver, from, lrb_m }
     end
 
     next id, beb, drop_rate

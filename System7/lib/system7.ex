@@ -30,8 +30,8 @@ defmodule System7 do
     peer_metadata =
       for _ <- 1..num_peers do
         receive do
-          { :response, id, lpl, beb, app, erb, fd_lpl } ->
-            { id, lpl, beb, app, erb, fd_lpl }
+          { :response, id, lpl, beb, app, lrb, fd_lpl } ->
+            { id, lpl, beb, app, lrb, fd_lpl }
         end
       end
 

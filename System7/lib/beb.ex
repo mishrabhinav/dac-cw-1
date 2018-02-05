@@ -6,30 +6,30 @@ defmodule BEB do
     IO.puts ["\tBEB at ", DNS.my_ip_addr()]
 
     receive do
-      { :bind, lpl, erb, lpls } ->
-        wait_for_broadcast id, lpl, erb, lpls
+      { :bind, lpl, lrb, lpls } ->
+        wait_for_broadcast id, lpl, lrb, lpls
     end
   end # start
 
-  defp wait_for_broadcast id, lpl, erb, lpls do
+  defp wait_for_broadcast id, lpl, lrb, lpls do
     receive do
       { :pl_deliver, max_broadcasts, timeout } ->
-        send erb, { :beb_deliver, max_broadcasts, timeout }
-        next id, lpl, erb, lpls
+        send lrb, { :beb_deliver, max_broadcasts, timeout }
+        next id, lpl, lrb, lpls
     end
   end # wait_for_broadcast
 
-  defp next id, lpl, erb, lpls do
+  defp next id, lpl, lrb, lpls do
     receive do
-      { :beb_broadcast, erb_m } ->
+      { :beb_broadcast, lrb_m } ->
         for { _, dest } <- lpls, do:
-          send lpl, { :pl_send, id, dest, erb_m }
+          send lpl, { :pl_send, id, dest, lrb_m }
 
-      { :pl_deliver, from, erb_m } ->
-        send erb, { :beb_deliver, from, erb_m }
+      { :pl_deliver, from, lrb_m } ->
+        send lrb, { :beb_deliver, from, lrb_m }
     end
 
-    next id, lpl, erb, lpls
+    next id, lpl, lrb, lpls
   end #next
 
 end # BEB

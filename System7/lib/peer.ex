@@ -7,11 +7,11 @@ defmodule Peer do
     app    = spawn App, :start, [id]
     lpl    = spawn LPL, :start, [id, lpl_drop_rate]
     beb    = spawn BEB, :start, [id]
-    erb    = spawn ERB, :start, [id]
+    lrb    = spawn LRB, :start, [id]
     fd     = spawn FD,  :start, []
     fd_lpl = spawn LPL, :start, [id, lpl_drop_rate]
 
-    send system, { :response, id, lpl, beb, app, erb, fd_lpl }
+    send system, { :response, id, lpl, beb, app, lrb, fd_lpl }
 
     receive do
       { :bind, peer_metadata } ->
@@ -21,20 +21,20 @@ defmodule Peer do
                         fn { id, _, _, _, _, fd_lpl } -> { id, fd_lpl } end)
 
         send lpl, { :bind, beb }
-        send beb, { :bind, lpl, erb, lpls }
-        send erb, { :bind, beb, app }
-        send fd,  { :bind, erb, fd_lpl, fd_lpls, failure_timeout}
-        send app, { :bind, erb, length(peer_metadata) }
+        send beb, { :bind, lpl, lrb, lpls }
+        send lrb, { :bind, beb, app }
+        send fd,  { :bind, lrb, fd_lpl, fd_lpls, failure_timeout}
+        send app, { :bind, lrb, length(peer_metadata) }
     end
 
     if id == 3, do:
-      kill kill_timeout, app, lpl, beb, erb
+      kill kill_timeout, app, lpl, beb, lrb
   end # start
 
-  defp kill timeout, app, lpl, beb, erb do
+  defp kill timeout, app, lpl, beb, lrb do
     Process.sleep(timeout)
     Process.exit(app, :kill)
-    Process.exit(erb, :kill)
+    Process.exit(lrb, :kill)
     Process.exit(beb, :kill)
     Process.exit(lpl, :kill)
     Process.exit(self(), :kill)

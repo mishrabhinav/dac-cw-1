@@ -5,51 +5,51 @@ defmodule App do
     IO.puts ["\tApp at ", DNS.my_ip_addr()]
 
     receive do
-      {:bind, erb, num_peers } ->
-        wait_for_broadcast id, erb, num_peers
+      {:bind, lrb, num_peers } ->
+        wait_for_broadcast id, lrb, num_peers
     end
   end # start
 
-  defp wait_for_broadcast id, erb, num_peers do
+  defp wait_for_broadcast id, lrb, num_peers do
     receive do
-      { :erb_deliver, max_messages, timeout } ->
+      { :lrb_deliver, max_messages, timeout } ->
         counter = for _ <- 1..num_peers, do: {0, 0}
-        broadcast id, erb, max_messages, curr_time() + timeout, counter
+        broadcast id, lrb, max_messages, curr_time() + timeout, counter
     end
   end # wait_for_broadcast
 
-  defp broadcast id, erb, messages, end_time, counter do
+  defp broadcast id, lrb, messages, end_time, counter do
     cond do
       curr_time() >= end_time ->
         stats = for {sent, recv} <- counter, do: "{#{sent}:#{recv}}"
         IO.puts Enum.join(["#{id}:"] ++ stats, " ")
 
       messages > 0 ->
-        send erb, { :erb_broadcast, :hello }
+        send lrb, { :lrb_broadcast, :hello }
 
         counter = Enum.map(counter, fn {s, r} -> {s+1, r} end)
 
         receive do
-          { :erb_deliver, from, :hello } ->
+          { :lrb_deliver, from, :hello } ->
             counter = List.update_at(counter,
                                      from - 1,
                                      fn {s, r} -> {s, r+1} end)
-            broadcast id, erb, messages - 1, end_time, counter
+            broadcast id, lrb, messages - 1, end_time, counter
         after
           0 ->
-          broadcast id, erb, messages - 1, end_time, counter
+          broadcast id, lrb, messages - 1, end_time, counter
         end
 
       true ->
         receive do
-          { :erb_deliver, from, :hello } ->
+          { :lrb_deliver, from, :hello } ->
             counter = List.update_at(counter,
                                      from - 1,
                                      fn {s, r} -> {s, r+1} end)
-            broadcast id, erb, messages - 1, end_time, counter
+            broadcast id, lrb, messages - 1, end_time, counter
         after
           0 ->
-            broadcast id, erb, messages, end_time, counter
+            broadcast id, lrb, messages, end_time, counter
         end
     end
 
