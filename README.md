@@ -56,7 +56,6 @@ You can get the Digital Ocean API key from their portal. Please make sure that y
 > terraform validate # This validates the terraform config
 > terraform plan     # Shows you a plan of the deployment
 > terraform apply    # Runs terraform to create the necessary resources
-> ./run peers.txt system.txt ../<>
 ```
 
 Now you should be in a state to start the Peers on the peer nodes. Run the following in the `Terraform` directory.
@@ -80,6 +79,8 @@ Execute the following commands for a proper cleanup and destruction of the resou
 ```
 
 At this point, all the Digital Ocean resources should have been destroyed but it's safer to double check on the dashboard.
+
+*NOTE:* It is pretty important to remove the `txt` files as the deployments heavily depend on them and in case one forgets to remove them, it can the leave the future deployments in an inconsistent state.
 
 ### Detailed Provisioning
 It is a pretty straightforward setup. The terraform config creates 5 peer nodes and 1 system node by default. These number can be changed manually for creating a different number of nodes. All the peer nodes are created before the system node as the system node has to save the IP addresses of the peer nodes. After the peer droplet (node) is created, a series of scripts are run to setup elixir, clone the source code, and save the IPv4 address both locally and on the node. The system node is setup is a similar fashion except a file with all the peer ipv4 addresses is copied to `/etc/ips.txt` for the `System` process to read peer IP's.
