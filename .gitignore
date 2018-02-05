@@ -1,5 +1,17 @@
+*.txt
 
 # Created by https://www.gitignore.io/api/vim,linux,macos,erlang,elixir,ansible
+
+### Terraform ###
+# Compiled files
+*.tfstate
+*.tfstate.backup
+
+# Module directory
+.terraform/
+
+### Terraform Patch ###
+*.tfvars
 
 ### Ansible ###
 *.retry
