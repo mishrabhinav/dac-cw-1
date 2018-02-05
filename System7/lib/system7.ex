@@ -8,6 +8,7 @@ defmodule System7 do
     kill_timeout = 5
     num_peers = 5
     pl_reliability = 100
+    failure_timeout = 1000
 
     peers =
       case System.get_env("DOCKER") || "false" do
@@ -17,27 +18,27 @@ defmodule System7 do
              Node.spawn(:"peer#{i}@peer#{i}.localdomain",
                         Peer,
                         :start,
-                        [i, self(), pl_reliability, kill_timeout])
+                        [i, self(), pl_reliability, kill_timeout, failure_timeout])
            }
         "false" ->
           for i <- 1..num_peers, do:
             { i,
-              spawn(Peer, :start, [i, self(), pl_reliability, kill_timeout])
+              spawn(Peer, :start, [i, self(), pl_reliability, kill_timeout, failure_timeout])
             }
       end
 
     peer_metadata =
       for _ <- 1..num_peers do
         receive do
-          { :response, id, lpl, beb, app, erb } ->
-            { id, lpl, beb, app, erb }
+          { :response, id, lpl, beb, app, erb, fd_lpl } ->
+            { id, lpl, beb, app, erb, fd_lpl }
         end
       end
 
     for { _, peer } <- peers, do:
       send peer, { :bind, peer_metadata }
 
-    for { _, lpl, _, _, _ } <- peer_metadata, do:
+    for { _, lpl, _, _, _, _ } <- peer_metadata, do:
       send lpl, { :pl_send, max_broadcasts, timeout }
 
   end # main
