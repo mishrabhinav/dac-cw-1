@@ -19,10 +19,12 @@ defmodule Peer do
                         fn { id, lpl, _, _, _, _ } -> { id, lpl } end)
         fd_lpls = Enum.map(peer_metadata,
                         fn { id, _, _, _, _, fd_lpl } -> { id, fd_lpl } end)
+        processes = Enum.map(peer_metadata,
+                        fn { id, _, _, _, _, _ } -> id end)
 
         send lpl, { :bind, beb }
         send beb, { :bind, lpl, lrb, lpls }
-        send lrb, { :bind, beb, app }
+        send lrb, { :bind, beb, app, processes }
         send fd,  { :bind, lrb, fd_lpl, fd_lpls, failure_timeout}
         send app, { :bind, lrb, length(peer_metadata) }
     end
