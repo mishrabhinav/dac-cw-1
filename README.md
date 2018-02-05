@@ -9,7 +9,7 @@
 | 1             | Each Peer broadcasts a `:hello` message to each other until `MAX_BROADCASTS` are sent or `TIMEOUT` is reached whilst awaiting a message |
 | 2             | Peers use Perfect P2P Links for communication |
 | 3             | Peers use Best Effort Broadcast for communication |
-| 4             | P2P Links drop messages at an `LPL_DROP_RATE` |
+| 4             | P2P Links drop messages at an `LPL_RELIABILITY` |
 | 5             | Peer 3 terminates after `KILL_TIMEOUT` milliseconds |
 | 6             | Peers use Eager Reliable Broadcast for communication |
 | 7             | Peers use Lazy Reliable Broadcast for communication, checking for dead processes after `FAILURE_TIMEOUT` milliseconds |
@@ -94,6 +94,6 @@ The following table shows which options are available and in which System they c
 |:--------------------:|:--------------------:|
 | MAX_BROADCASTS       | 1,2,3,4,5,6,7        |
 | TIMEOUT              | 1,2,3,4,5,6,7        |
-| LPL_DROP_RATE        | 4,5,6,7              |
+| LPL_RELIABILITY      | 4,5,6,7              |
 | KILL_TIMEOUT         | 5,6,7                |
 | FAILURE_TIMEOUT      | 7                    |

@@ -9,7 +9,7 @@ x-common:
       - DOCKER=true
       - MAX_BROADCASTS=${MAX_BROADCASTS:-1000}
       - TIMEOUT=${TIMEOUT:-3000}
-      - LPL_DROP_RATE=${LPL_DROP_RATE:-0}
+      - LPL_RELIABILITY=${LPL_RELIABILITY:-33}
       - KILL_TIMEOUT=${KILL_TIMEOUT:-5}
     networks:
       - network

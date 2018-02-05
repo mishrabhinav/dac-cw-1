@@ -32,8 +32,8 @@ defmodule System4 do
                      else
                        3000
                      end
-    lpl_drop_rate  = if System.get_env("LPL_DROP_RATE") do
-                       String.to_integer(System.get_env("LPL_DROP_RATE"))
+    lpl_reliability  = if System.get_env("LPL_RELIABILITY") do
+                       String.to_integer(System.get_env("LPL_RELIABILITY"))
                      else
                        33
                      end
@@ -41,9 +41,9 @@ defmodule System4 do
 
     peers = for i <- 1..num_peers do
       case env do
-        :net    -> { i, Node.spawn(:"peer4@#{Enum.at(domains, i - 1)}", Peer, :start, [i, self(), lpl_drop_rate])}
-        :docker -> { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), lpl_drop_rate])}
-        :local  -> { i, spawn(Peer, :start, [i, self(), lpl_drop_rate])}
+        :net    -> { i, Node.spawn(:"peer4@#{Enum.at(domains, i - 1)}", Peer, :start, [i, self(), lpl_reliability])}
+        :docker -> { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), lpl_reliability])}
+        :local  -> { i, spawn(Peer, :start, [i, self(), lpl_reliability])}
       end
     end
 

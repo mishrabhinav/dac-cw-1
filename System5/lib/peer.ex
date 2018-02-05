@@ -1,11 +1,11 @@
 # Matthew Brookes (mb5715) and Abhinav Mishra (am8315)
 defmodule Peer do
 
-  def start id, system, lpl_drop_rate, kill_timeout do
+  def start id, system, lpl_reliability, kill_timeout do
     IO.puts ["\tPeer at ", DNS.my_ip_addr()]
 
     app = spawn App, :start, [id]
-    lpl = spawn LPL, :start, [id, lpl_drop_rate]
+    lpl = spawn LPL, :start, [id, lpl_reliability]
     beb = spawn BEB, :start, [id]
 
     send system, { :response, id, lpl, beb, app }

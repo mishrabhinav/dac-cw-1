@@ -32,10 +32,10 @@ defmodule System7 do
                      else
                        3000
                      end
-    pl_reliability = if System.get_env("LPL_DROP_RATE") do
-                       100 - String.to_integer(System.get_env("LPL_DROP_RATE"))
+    lpl_reliability = if System.get_env("LPL_RELIABILITY") do
+                       String.to_integer(System.get_env("LPL_RELIABILITY"))
                      else
-                       100
+                       33
                      end
     kill_timeout   = if System.get_env("KILL_TIMEOUT") do
                        String.to_integer(System.get_env("KILL_TIMEOUT"))
@@ -51,9 +51,9 @@ defmodule System7 do
 
     peers = for i <- 1..num_peers do
       case env do
-        :net    -> { i, Node.spawn(:"peer7@#{Enum.at(domains, i - 1)}", Peer, :start, [i, self(), pl_reliability, kill_timeout, failure_timeout])}
-        :docker -> { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), pl_reliability, kill_timeout, failure_timeout])}
-        :local  -> { i, spawn(Peer, :start, [i, self(), pl_reliability, kill_timeout, failure_timeout])}
+        :net    -> { i, Node.spawn(:"peer7@#{Enum.at(domains, i - 1)}", Peer, :start, [i, self(), lpl_reliability, kill_timeout, failure_timeout])}
+        :docker -> { i, Node.spawn(:"peer#{i}@peer#{i}.localdomain", Peer, :start, [i, self(), lpl_reliability, kill_timeout, failure_timeout])}
+        :local  -> { i, spawn(Peer, :start, [i, self(), lpl_reliability, kill_timeout, failure_timeout])}
       end
     end
 
