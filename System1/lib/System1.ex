@@ -12,7 +12,7 @@ defmodule System1 do
 
   def main_net do
     domains =
-      File.stream!("../ips.txt")
+      File.stream!("/etc/ips.txt")
       |> Stream.map(&String.trim_trailing/1)
       |> Enum.to_list
 
