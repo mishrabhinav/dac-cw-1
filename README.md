@@ -58,13 +58,14 @@ You can get the Digital Ocean API key from their portal. Please make sure that y
 > terraform apply    # Runs terraform to create the necessary resources
 ```
 
-Now you should be in a state to start the Peers on the peer nodes. Run the following in the `Terraform` directory.
+Now you should be in a state to start the Peers for System X on the peer nodes. Run the following in the `Terraform` directory.
 
 ```
 > ./run peers.txt system.txt ../<SystemX> # X = 1..7
 ```
+*Note:* You will have to start all the peers separately by running the command for all the Systems.
 
-This will SSH into every peer node, check the requirements, and start the elixir node in detached mode with the name set as `peer<X>@<ipv4_address>`. It also checks the system node for the requirements. After the script finished, once can SSH into the system node and navigate to `dac-cw-1/System<X>` and run the following command to start the SystemX (X = 1..7).
+This will SSH into every peer node, check the requirements, and start an elixir node in detached mode with `peer<X>@<ipv4_address>` as the name and `darthvader` as the cookie. It also checks the system node for the requirements. After the script finished, once can SSH into the system node and navigate to `dac-cw-1/System<X>` and run the following command to start the SystemX (X = 1..7).
 ```
 > elixir --name system@<ipv4_address> --cookie darthvader -S mix run --no-halt -e System<X>.main_net
 ```
